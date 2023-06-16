@@ -11,7 +11,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func StartAwsAudit(awsKeys *support.SentinelConfig) error {
+func StartAwsAudit(sentinelConfig *support.SentinelConfig) error {
 	newLog := log.WithFields(log.Fields{
 		"filName": "awssupport",
 	})
@@ -19,7 +19,7 @@ func StartAwsAudit(awsKeys *support.SentinelConfig) error {
 	newLog.Info("Creating session object")
 
 	sess, err := session.NewSession(&aws.Config{
-		Credentials: credentials.NewStaticCredentials(awsKeys.AccessId, awsKeys.SecretKey, ""),
+		Credentials: credentials.NewStaticCredentials(sentinelConfig.AccessId, sentinelConfig.SecretKey, ""),
 	})
 	if err != nil {
 		return err
@@ -27,7 +27,7 @@ func StartAwsAudit(awsKeys *support.SentinelConfig) error {
 	newLog.Infof("Session Created successfully %s", *sess.Config.Region)
 
 	// Route53 Privacy Protection Check
-	auditscripts.StartRoute53PrivacyProtectionCheck(awsKeys, sess, newLog)
+	auditscripts.StartRoute53PrivacyProtectionCheck(sentinelConfig, sess, newLog)
 
 	return nil
 }
