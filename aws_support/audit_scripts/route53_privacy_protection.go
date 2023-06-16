@@ -13,7 +13,11 @@ import (
 
 // Main handler function for Rout53 Privacy Protection Check
 func StartRoute53PrivacyProtectionCheck(sentinelConfig *support.SentinelConfig, sess *session.Session, newLog *log.Entry) {
-	newLog.Infof("Going -> %s", sentinelConfig.Region[0])
+	newLog = newLog.WithFields(log.Fields{
+		"audit": "rout53_privacy_protection_check",
+	})
+
+	newLog.Info("Starting Privacy protection lookup for rout53 entries")
 	for i := 0; i < len(sentinelConfig.Region); i++ {
 		newLog.Infof("Working with region -> %s", sentinelConfig.Region[i])
 		startRoute53PrivacyProtectionCheckPerRegion(sentinelConfig, sess, newLog, sentinelConfig.Region[i])
@@ -25,8 +29,6 @@ func StartRoute53PrivacyProtectionCheck(sentinelConfig *support.SentinelConfig, 
 func startRoute53PrivacyProtectionCheckPerRegion(sentinelConfig *support.SentinelConfig, sess *session.Session, newLog *log.Entry, region string) {
 
 	var listOfDomains []string
-	newLog.Info("Starting Privacy protection lookup for rout53 entries")
-
 	svc := route53domains.New(sess, &aws.Config{
 		Region: aws.String(region)})
 
@@ -65,7 +67,7 @@ func startRoute53PrivacyProtectionCheckPerRegion(sentinelConfig *support.Sentine
 			dataForFile = fmt.Sprintf("%s\n%s", dataForFile, listOfDomains[i])
 		}
 
-		err := os.WriteFile(fmt.Sprintf("%s/%s", sentinelConfig.OutputDir, "route53_privacy_protection.txt"), []byte(dataForFile), 0644)
+		err := os.WriteFile(fmt.Sprintf("%s/%s-%s", sentinelConfig.OutputDir, region, "route53_privacy_protection.txt"), []byte(dataForFile), 0644)
 		if err != nil {
 			newLog.Panic("Error occurred while writing data to output file.")
 		}

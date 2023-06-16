@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+#### Added
+- Support for `eks_encryption` check added.
 
 ## [0.0.1] - 2023-06-16
 #### Added

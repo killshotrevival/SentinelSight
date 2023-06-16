@@ -1,7 +1,7 @@
 package awssupport
 
 import (
-	auditscripts "sentinelsight/aws_support/audit_scripts"
+	audit_scripts "sentinelsight/aws_support/audit_scripts"
 	"sentinelsight/support"
 
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -13,7 +13,9 @@ func InitializeAuditFunctions() ([]func(*support.SentinelConfig, *session.Sessio
 	var allAwsAuditFunctions []func(*support.SentinelConfig, *session.Session, *log.Entry)
 
 	allAwsAuditFunctions = append(allAwsAuditFunctions,
-		auditscripts.StartRoute53PrivacyProtectionCheck)
+		audit_scripts.StartRoute53PrivacyProtectionCheck,
+		audit_scripts.StartEKSEncryptionCheck,
+	)
 
 	return allAwsAuditFunctions, nil
 }
